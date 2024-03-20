@@ -1,8 +1,10 @@
+import { fetchRevenue } from "@/app/lib/data"
 import { generateYAxis } from "@/app/lib/utils"
+import { lusitana } from "@/app/ui/font"
 import { CalendarIcon } from "@heroicons/react/24/outline"
-import { lusitana } from "../font"
 
-const RevenueChart = ({ revenue }) => {
+const RevenueChart = async () => {
+  const revenue = await fetchRevenue()
   const chartHeight = 350
 
   const { yAxisLabels, topLabel } = generateYAxis(revenue)

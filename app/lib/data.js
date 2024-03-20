@@ -1,8 +1,11 @@
 import { sql } from "@vercel/postgres"
+import { unstable_noStore as noStore } from "next/cache"
 import { formatCurrency } from "./utils"
 
 export async function fetchRevenue() {
+  noStore()
   try {
+    await new Promise(r => setTimeout(r, 3000))
     const data = await sql`select * from revenue`
     if (data && data.rows.length > 0) return data.rows
     else return null
@@ -13,7 +16,9 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noStore()
   try {
+    await new Promise(r => setTimeout(r, 1500))
     const data =
       await sql`SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
   FROM invoices
@@ -38,7 +43,9 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
+  noStore()
   try {
+    await new Promise(r => setTimeout(r, 1000))
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`
     const invoiceStatusPromise = sql`SELECT
@@ -58,6 +65,7 @@ export async function fetchCardData() {
       const { paid, pending } = data[2].rows[0]
       const totalPaidInvoices = Number(paid ?? "0")
       const totalPendingInvoices = Number(pending ?? "0")
+
       return {
         numberOfCustomers,
         numberOfInvoices,
@@ -74,8 +82,10 @@ export async function fetchCardData() {
 
 const ITEMS_PER_PAGE = 6
 export async function fetchFilteredInvoices(query, currentPage) {
+  noStore()
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
   try {
+    await new Promise(r => setTimeout(r, 1000))
     const invoices = await sql`
       SELECT
         invoices.id,
@@ -104,6 +114,7 @@ export async function fetchFilteredInvoices(query, currentPage) {
 }
 
 export async function fetchInvoicesPages(query) {
+  noStore()
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
@@ -125,6 +136,7 @@ export async function fetchInvoicesPages(query) {
 }
 
 export async function fetchInvoiceById(id) {
+  noStore()
   try {
     const data = await sql`SELECT
         invoices.id,
@@ -148,6 +160,7 @@ export async function fetchInvoiceById(id) {
 }
 
 export async function fetchCustomers() {
+  noStore()
   try {
     const data = await sql`SELECT
         id,
@@ -163,6 +176,7 @@ export async function fetchCustomers() {
 }
 
 export async function fetchFilteredCustomers(query) {
+  noStore()
   try {
     const data = await sql`
         SELECT
@@ -195,6 +209,7 @@ export async function fetchFilteredCustomers(query) {
 }
 
 export async function getUser(email) {
+  noStore()
   try {
     const user = await sql`select * from users where email=${email}`
     if (user && user.rows.length > 0) return user.rows[0]
